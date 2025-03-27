@@ -12,6 +12,18 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: db # phpMyAdmin이 연결할 MySQL의 HOST
+      MYSQL_ROOT_PASSWORD: 1234 # MySQL 비밀번호
+    ports:
+      - 8090:80
+    depends_on:
+      - db
+    restart: always
+
 volumes:
   mysql_data:
 
