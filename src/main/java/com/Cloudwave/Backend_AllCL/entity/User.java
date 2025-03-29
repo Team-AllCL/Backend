@@ -21,7 +21,7 @@ public class User {
     // 비밀번호
     @Column(nullable = false)
     private String password;
-
+    
     // 기본 생성자
     public User(){}
 
