@@ -22,7 +22,7 @@ public class ProductOrder extends BaseEntity {
     private User user;
 
     // 주문 상품 - 하나의 상품만 주문한다고 가정
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
