@@ -1,7 +1,7 @@
 package com.Cloudwave.Backend_AllCL.service;
 
-import com.Cloudwave.Backend_AllCL.dto.OrderRequestDto;
-import com.Cloudwave.Backend_AllCL.dto.OrderResponseDto;
+import com.Cloudwave.Backend_AllCL.dto.order.OrderRequestDto;
+import com.Cloudwave.Backend_AllCL.dto.order.OrderResponseDto;
 import com.Cloudwave.Backend_AllCL.entity.ProductOrder;
 import com.Cloudwave.Backend_AllCL.entity.User;
 import com.Cloudwave.Backend_AllCL.repository.ProductOrderRepository;
