@@ -1,8 +1,9 @@
 package com.Cloudwave.Backend_AllCL.service;
 
+import com.Cloudwave.Backend_AllCL.repository.UserRepository;
+
 import com.Cloudwave.Backend_AllCL.dto.UserDto;
 import com.Cloudwave.Backend_AllCL.entity.User;
-import com.Cloudwave.Backend_AllCL.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
