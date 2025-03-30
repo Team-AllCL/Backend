@@ -15,37 +15,23 @@ public class Ticket extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 티켓 이름(ex. 페스타)
-    @Column(nullable = false)
-    private String name;
-
-    // 티켓 가격
-    @Column(nullable = false)
-    private int price;
-
-    // 티켓 재고
-    @Column(nullable = false)
-    private int stock;
-
     // 티켓 구매한 사용자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 티켓 구매 시간
-    // @Column(nullable = false)
-    // private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inventory_id", nullable = false)
+    private TicketInventory ticketInventory;
 
     // 기본 생성자
     public Ticket() {}
 
     // 빌더 패턴
     @Builder
-    public Ticket(String name, int price, int stock, User user, LocalDateTime purchaseTime) {
-        this.name = name;
-        this.price = price;
-        this.stock = stock;
+    public Ticket(User user, TicketInventory ticketInventory) {
         this.user = user;
-        // this.createdAt = createdAt;
+        this.ticketInventory = ticketInventory;
     }
+
 }
