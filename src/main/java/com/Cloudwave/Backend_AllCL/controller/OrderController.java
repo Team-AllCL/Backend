@@ -1,6 +1,7 @@
 package com.Cloudwave.Backend_AllCL.controller;
 
 import com.Cloudwave.Backend_AllCL.dto.OrderRequestDto;
+import com.Cloudwave.Backend_AllCL.dto.OrderResponseDto;
 import com.Cloudwave.Backend_AllCL.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getOrders() {
-        return ResponseEntity.ok("주문 조회 API는 아직 구현되지 않았습니다.");
+    public ResponseEntity<OrderResponseDto> getLatestOrder() {
+        return ResponseEntity.ok(orderService.getLatestOrder());
     }
 }

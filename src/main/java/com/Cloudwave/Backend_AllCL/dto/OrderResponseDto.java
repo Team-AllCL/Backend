@@ -2,12 +2,13 @@ package com.Cloudwave.Backend_AllCL.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequestDto {
+public class OrderResponseDto {
     private String productName;
     private String userEmail;
+    private LocalDateTime createdAt;
 }
