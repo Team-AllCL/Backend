@@ -2,15 +2,13 @@ package com.Cloudwave.Backend_AllCL.entity;
 
 import com.Cloudwave.Backend_AllCL.exception.CustomException;
 import com.Cloudwave.Backend_AllCL.exception.ErrorCode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Getter
+@Table(name = "ticket_inventory")
 public class TicketInventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +18,6 @@ public class TicketInventory {
 
     private int price;
 
-    // 초기 재고 설정
     private int stock;
 
     // 티켓 감소

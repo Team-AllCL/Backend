@@ -1,6 +1,6 @@
 package com.Cloudwave.Backend_AllCL.controller;
 
-import com.Cloudwave.Backend_AllCL.dto.UserDto;
+import com.Cloudwave.Backend_AllCL.dto.user.UserDto;
 import com.Cloudwave.Backend_AllCL.entity.User;
 import com.Cloudwave.Backend_AllCL.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

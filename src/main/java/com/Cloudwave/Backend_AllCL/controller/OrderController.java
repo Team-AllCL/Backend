@@ -1,7 +1,7 @@
 package com.Cloudwave.Backend_AllCL.controller;
 
-import com.Cloudwave.Backend_AllCL.dto.OrderRequestDto;
-import com.Cloudwave.Backend_AllCL.dto.OrderResponseDto;
+import com.Cloudwave.Backend_AllCL.dto.order.OrderRequestDto;
+import com.Cloudwave.Backend_AllCL.dto.order.OrderResponseDto;
 import com.Cloudwave.Backend_AllCL.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

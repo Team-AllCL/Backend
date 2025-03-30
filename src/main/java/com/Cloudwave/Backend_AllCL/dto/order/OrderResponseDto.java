@@ -1,4 +1,4 @@
-package com.Cloudwave.Backend_AllCL.dto;
+package com.Cloudwave.Backend_AllCL.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
