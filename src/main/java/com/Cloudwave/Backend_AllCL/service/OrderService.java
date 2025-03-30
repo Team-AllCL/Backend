@@ -1,11 +1,11 @@
 package com.Cloudwave.Backend_AllCL.service;
 
 import com.Cloudwave.Backend_AllCL.dto.OrderRequestDto;
+import com.Cloudwave.Backend_AllCL.dto.OrderResponseDto;
 import com.Cloudwave.Backend_AllCL.entity.ProductOrder;
 import com.Cloudwave.Backend_AllCL.entity.User;
 import com.Cloudwave.Backend_AllCL.repository.ProductOrderRepository;
 import com.Cloudwave.Backend_AllCL.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +26,10 @@ public class OrderService {
                 .build();
 
         productOrderRepository.save(order);
+    }
+
+    public OrderResponseDto getLatestOrder() {
+        ProductOrder order = productOrderRepository.findLatestOrder();
+        return new OrderResponseDto(order.getProductName(), order.getUser().getEmail(), order.getCreatedAt());
     }
 }
