@@ -11,8 +11,11 @@ import com.Cloudwave.Backend_AllCL.repository.TicketInventoryRepository;
 import com.Cloudwave.Backend_AllCL.repository.TicketRepository;
 import com.Cloudwave.Backend_AllCL.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final TicketInventoryRepository ticketInventoryRepository;
+
 
     @Transactional
     public TicketResponseDto purchaseTicket(TicketRequestDto requestDto){
@@ -51,4 +55,11 @@ public class TicketService {
         return new TicketResponseDto(savedTicket);
 
     }
+
+    public List<TicketResponseDto> getAllTickets(){
+        return ticketRepository.findAll().stream()
+                .map(TicketResponseDto::new)
+                .toList();
+    }
+
 }
