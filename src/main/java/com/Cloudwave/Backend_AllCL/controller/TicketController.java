@@ -19,8 +19,8 @@ public class TicketController {
 
     @PostMapping
     public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto) {
-        System.out.println("[티켓 발급 요청] 사용자 ID: " + ticketRequestDto.getUserId() +
-                        ", 인벤토리 ID: " + ticketRequestDto.getInventoryId());
+        System.out.println("[티켓 발급 요청] 사용자 이메일: " + ticketRequestDto.getEmail() +
+                           ", 티켓 이름: " + ticketRequestDto.getTicketName());
 
         try {
             TicketResponseDto responseDto = ticketService.purchaseTicket(ticketRequestDto);
@@ -30,7 +30,6 @@ public class TicketController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
 
     @GetMapping
     public ResponseEntity<List<TicketResponseDto>> getAllTickets() {
