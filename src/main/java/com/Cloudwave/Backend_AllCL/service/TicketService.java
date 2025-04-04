@@ -32,7 +32,7 @@ public class TicketService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 중복 티켓팅 구매 확인
-        boolean alreadyPurchased = ticketRepository.existsByUser(user);
+        boolean alreadyPurchased = ticketRepository.existsByUserEmail(requestDto.getEmail());
         if(alreadyPurchased){
             throw new CustomException(ErrorCode.DUPLICATE_PURCHASE);
         }
