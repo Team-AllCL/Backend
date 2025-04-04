@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000") // 프론트 주소 허용
 @RestController
 @RequestMapping("/api/v1/ticketing")
 @RequiredArgsConstructor
