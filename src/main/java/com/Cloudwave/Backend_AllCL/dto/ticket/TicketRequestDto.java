@@ -1,15 +1,18 @@
 package com.Cloudwave.Backend_AllCL.dto.ticket;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class TicketRequestDto {
 
     private Long userId;
-    private String ticketName; // 티켓이름 : 올리브영 페스타
+    private Long inventoryId; // <- 기존 ticketName 대신 inventoryId
 
-    public TicketRequestDto(Long userId, String ticketName) {
+    public TicketRequestDto(Long userId, Long inventoryId) {
         this.userId = userId;
-        this.ticketName = ticketName;
+        this.inventoryId = inventoryId;
     }
 }
+

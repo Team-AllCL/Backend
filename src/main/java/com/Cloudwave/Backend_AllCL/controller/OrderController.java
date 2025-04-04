@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins = "http://localhost:3001") // 프론트 주소 허용
+@CrossOrigin(origins = "http://localhost:3000") // 프론트 주소 허용
 @RestController
 @RequestMapping("/api/v1/order")
 @RequiredArgsConstructor

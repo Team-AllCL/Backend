@@ -27,24 +27,20 @@ public class TicketService {
 
     @Transactional
     public TicketResponseDto purchaseTicket(TicketRequestDto requestDto){
-        // 사용자 조회
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 중복 티켓팅 구매 확인
         boolean alreadyPurchased = ticketRepository.existsByUser(user);
         if(alreadyPurchased){
             throw new CustomException(ErrorCode.DUPLICATE_PURCHASE);
         }
 
-        // 티켓 이름 요청에서 받기
-        TicketInventory inventory = ticketInventoryRepository.findByName(requestDto.getTicketName())
+        // inventoryId로 조회
+        TicketInventory inventory = ticketInventoryRepository.findById(requestDto.getInventoryId())
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
-        // 재고 감소
         inventory.decreaseStock();
 
-        // 티켓 저장
         Ticket ticket = Ticket.builder()
                 .user(user)
                 .ticketInventory(inventory)
@@ -53,8 +49,8 @@ public class TicketService {
         Ticket savedTicket = ticketRepository.save(ticket);
 
         return new TicketResponseDto(savedTicket);
-
     }
+
 
     public List<TicketResponseDto> getAllTickets(){
         return ticketRepository.findAll().stream()
