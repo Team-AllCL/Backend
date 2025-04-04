@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public class TicketRequestDto {
 
-    private Long userId;
+    private String email;  // userId -> email 변경
     private String ticketName; // 티켓이름 : 올리브영 페스타
 
-    public TicketRequestDto(Long userId, String ticketName) {
-        this.userId = userId;
+    public TicketRequestDto(String email, String ticketName) {
+        this.email = email;
         this.ticketName = ticketName;
     }
 }
