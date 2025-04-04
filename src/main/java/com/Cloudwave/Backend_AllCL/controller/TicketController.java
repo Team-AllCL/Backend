@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
-// @ Controller + @ResponseBody
 @RestController
 @RequestMapping("/api/v1/ticketing")
 @RequiredArgsConstructor
@@ -19,21 +17,22 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    // 티켓 구매 요청
     @PostMapping
-    public ResponseEntity<TicketResponseDto> purchaseTicket(@RequestBody TicketRequestDto requestDto) {
-        TicketResponseDto responseDto = ticketService.purchaseTicket(requestDto);
+    public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto) {
+        System.out.println("[티켓 발급 요청] 사용자 이메일: " + ticketRequestDto.getEmail() +
+                           ", 티켓 이름: " + ticketRequestDto.getTicketName());
 
-        // HTTP 상태 코드 201 (Created)과 함께 응답 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        try {
+            TicketResponseDto responseDto = ticketService.purchaseTicket(ticketRequestDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-
-    // 티켓팅 결과 전체 조회
     @GetMapping
-    public ResponseEntity<List<TicketResponseDto>>getAllTicket() {
-        List<TicketResponseDto> tickets = ticketService.getAllTickets();
-        return ResponseEntity.ok(tickets);
+    public ResponseEntity<List<TicketResponseDto>> getAllTickets() {
+        return ResponseEntity.ok(ticketService.getAllTickets());
     }
-
 }

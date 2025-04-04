@@ -27,14 +27,13 @@ public class TicketService {
 
     @Transactional
     public TicketResponseDto purchaseTicket(TicketRequestDto requestDto){
-
-        // ✅ 1. 유저 먼저 조회
+        // 사용자 조회
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // ✅ 2. User 객체로 중복 티켓 구매 확인
-        boolean alreadyPurchased = ticketRepository.existsByUser(user);
-        if (alreadyPurchased) {
+        // 중복 티켓팅 구매 확인
+        boolean alreadyPurchased = ticketRepository.existsByUserEmail(requestDto.getEmail());
+        if(alreadyPurchased){
             throw new CustomException(ErrorCode.DUPLICATE_PURCHASE);
         }
 
