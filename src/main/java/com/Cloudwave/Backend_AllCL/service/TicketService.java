@@ -27,6 +27,7 @@ public class TicketService {
 
     @Transactional
     public TicketResponseDto purchaseTicket(TicketRequestDto requestDto){
+
         // 사용자 조회
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
