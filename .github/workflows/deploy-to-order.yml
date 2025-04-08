@@ -2,7 +2,7 @@ name: Deploy JAR to order-server via Bastion
 
 on:
   push:
-    branches: [main]
+    branches: [develop]
 
 jobs:
   deploy:
