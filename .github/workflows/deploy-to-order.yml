@@ -42,7 +42,7 @@ jobs:
           script: |
             # 복사한 JAR를 order-server로 전송
             scp -i /home/ec2-user/order-server-key.pem -o StrictHostKeyChecking=no \
-              /home/${{ secrets.BASTION_USER }}/deploy/*.jar \
+              /home/${{ secrets.BASTION_USER }}/*.jar \
               ${{ secrets.ORDER_USER }}@${{ secrets.ORDER_HOST }}:/home/${{ secrets.ORDER_USER }}/app/app.jar
               
             # order-server에 접속해서 실행
