@@ -15,12 +15,12 @@ jobs:
       - name: Checkout ip-update branch to read bastion IP
         run: |
           git fetch origin ip-update
-          git checkout origin/ip-update -- ip-update.txt
+          git checkout origin/ip-update -- bastion-ip.txt
 
-      - name: Read bastion IP from ip-update.txt
+      - name: Read bastion IP from bastion-ip.txt
         id: bastion
         run: |
-          BASTION_IP=$(cat ip-update.txt | tr -d '\n')
+          BASTION_IP=$(cat bastion-ip.txt | tr -d '\n')
           echo "bastion_ip=$BASTION_IP" >> $GITHUB_OUTPUT  
 
       - name: Set up Java 17
