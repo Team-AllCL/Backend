@@ -11,6 +11,17 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+      
+      - name: Checkout ip-update branch to read bastion IP
+        run: |
+          git fetch origin ip-update
+          git checkout origin/ip-update -- ip-update.txt
+
+      - name: Read bastion IP from ip-update.txt
+        id: bastion
+        run: |
+          BASTION_IP=$(cat ip-update.txt | tr -d '\n')
+          echo "bastion_ip=$BASTION_IP" >> $GITHUB_OUTPUT  
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
@@ -27,7 +38,7 @@ jobs:
       - name: Upload JAR to Bastion
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.BASTION_HOST }}
+          host: ${{ steps.bastion.outputs.bastion_ip }}
           username: ${{ secrets.BASTION_USER }}
           key: ${{ secrets.BASTION_KEY }}
           source: build/libs/*.jar
@@ -36,16 +47,14 @@ jobs:
       - name: SSH into Bastion and deploy to order-server
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.BASTION_HOST }}
+          host: ${{ steps.bastion.outputs.bastion_ip }}
           username: ${{ secrets.BASTION_USER }}
           key: ${{ secrets.BASTION_KEY }}
           script: |
-            # 복사한 JAR를 order-server로 전송
             scp -i /home/ec2-user/order-server-key.pem -o StrictHostKeyChecking=no \
               /home/${{ secrets.BASTION_USER }}/*.jar \
               ${{ secrets.ORDER_USER }}@${{ secrets.ORDER_HOST }}:/home/${{ secrets.ORDER_USER }}/app/app.jar
-              
-            # order-server에 접속해서 실행
+
             ssh -i /home/ec2-user/order-server-key.pem -o StrictHostKeyChecking=no \
               ${{ secrets.ORDER_USER }}@${{ secrets.ORDER_HOST }} << 'ENDSSH'
               pkill -f 'java -jar' || true
