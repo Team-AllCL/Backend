@@ -51,12 +51,12 @@ jobs:
           username: ${{ secrets.BASTION_USER }}
           key: ${{ secrets.BASTION_KEY }}
           script: |
-            scp -i /home/ec2-user/order-server-key.pem -o StrictHostKeyChecking=no \
+            scp -i /home/ec2-user/order-server-keypair.pem -o StrictHostKeyChecking=no \
               /home/${{ secrets.BASTION_USER }}/*.jar \
-              ${{ secrets.ORDER_USER }}@${{ secrets.ORDER_HOST }}:/home/${{ secrets.ORDER_USER }}/app/app.jar
+              ${{ secrets.ORDER_USER }}@${{ secrets.ORDER_HOST }}:/home/${{ secrets.ORDER_USER }}/app.jar
 
-            ssh -i /home/ec2-user/order-server-key.pem -o StrictHostKeyChecking=no \
+            ssh -i /home/ec2-user/order-server-keypair.pem -o StrictHostKeyChecking=no \
               ${{ secrets.ORDER_USER }}@${{ secrets.ORDER_HOST }} << 'ENDSSH'
               pkill -f 'java -jar' || true
-              nohup java -jar /home/${{ secrets.ORDER_USER }}/app/app.jar > /home/${{ secrets.ORDER_USER }}/app/app.log 2>&1 &
+              nohup java -jar /home/${{ secrets.ORDER_USER }}/app.jar > /home/${{ secrets.ORDER_USER }}/app.log 2>&1 &
             ENDSSH
