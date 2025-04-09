@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+@CrossOrigin(origins = "http://dkgmp1k5bgam1.cloudfront.net")
 @RestController
 @RequestMapping("/api/v1/order")
 @RequiredArgsConstructor

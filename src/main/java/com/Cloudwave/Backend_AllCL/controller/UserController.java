@@ -6,6 +6,7 @@ import com.Cloudwave.Backend_AllCL.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://dkgmp1k5bgam1.cloudfront.net")
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
