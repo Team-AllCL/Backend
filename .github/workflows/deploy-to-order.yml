@@ -36,7 +36,7 @@ jobs:
       - name: SSH into Bastion and deploy to order-server
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: 43.202.179.57
+          host: ${{ secrets.BASTION_HOST }}
           username: ${{ secrets.BASTION_USER }}
           key: ${{ secrets.BASTION_KEY }}
           script: |
