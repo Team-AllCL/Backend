@@ -11,17 +11,6 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-      
-      - name: Checkout ip-update branch to read bastion IP
-        run: |
-          git fetch origin ip-update
-          git checkout origin/ip-update -- bastion-ip.txt
-
-      - name: Read bastion IP from bastion-ip.txt
-        id: bastion
-        run: |
-          BASTION_IP=$(cat bastion-ip.txt | tr -d '\n')
-          echo "bastion_ip=$BASTION_IP" >> $GITHUB_OUTPUT  
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
@@ -38,7 +27,7 @@ jobs:
       - name: Upload JAR to Bastion
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ steps.bastion.outputs.bastion_ip }}
+          host: 43.202.179.57
           username: ${{ secrets.BASTION_USER }}
           key: ${{ secrets.BASTION_KEY }}
           source: build/libs/*.jar
