@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: allcl-backend
+  labels:
+    app: allcl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: allcl
+  template:
+    metadata:
+      labels:
+        app: allcl
+    spec:
+      containers:
+        - name: allcl-container
+          image: jysf/allcll:latest
+          ports:
+            - containerPort: 8080
