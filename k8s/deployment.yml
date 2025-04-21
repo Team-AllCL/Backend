@@ -18,6 +18,7 @@ spec:
         - name: regcred
       containers:
         - name: allcl-container
-          image: jysf/allcll:latest
+          image: jysf/allcll:0.0.3
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
