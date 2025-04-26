@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: order-ci
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: order-ci
   template:
     metadata:
       labels:
-        app: my-app
+        app: order-ci
     spec:
       containers:
-        - name: my-app
-          image: my-app:latest
-          ports:
-          - containerPort: 8081
+      - name: order-ci
+        image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci:latest
+        ports:
+        - containerPort: 8080
