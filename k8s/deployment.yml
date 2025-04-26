@@ -1,24 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: allcl-backend
-  labels:
-    app: allcl
+  name: order-ci
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: allcl
+      app: order-ci
   template:
     metadata:
       labels:
-        app: allcl
+        app: order-ci
     spec:
-      imagePullSecrets:
-        - name: regcred
       containers:
-        - name: allcl-container
-          image: jysf/allcll:0.0.3
-          imagePullPolicy: Always
+        - name: order-ci
+          image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci:latest
           ports:
-            - containerPort: 8080
+          - containerPort: 8080
+      imagePullSecrets:
+        - name: ecr-registry-secret
