@@ -18,7 +18,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-              service:
                 name: order-cd-service   # Service 이름
                 port:
                   number: 80
