@@ -10,6 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
+         "http://dkgmplk5bgam1.cloudfront.net",
                     "http://localhost:3000",
                     "http://localhost:3001",
                     "http://localhost:3002"
