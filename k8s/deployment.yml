@@ -16,7 +16,24 @@ spec:
       containers:
         - name: order-cd
           image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci:latest
+          imagePullPolicy: Always
           ports:
-          - containerPort: 8080
+            - containerPort: 8080
+          env:
+          - name: SPRING_DATASOURCE_URL
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: url
+          - name: SPRING_DATASOURCE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: username
+          - name: SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: password
       imagePullSecrets:
         - name: ecr-registry-secret
