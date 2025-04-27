@@ -11,11 +11,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.disable())     // CORS 비활성화
-                .csrf(csrf -> csrf.disable())     // CSRF 비활성화
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()     // 모든 요청 허용
-                );
+            .cors()                              // 여기 cors() 활성화
+            .and()
+            .csrf().disable()                     // CSRF 비활성화
+            .authorizeHttpRequests(authorize -> authorize
+                .anyRequest().permitAll()         // 모든 요청 허용
+            );
         return http.build();
     }
 }
