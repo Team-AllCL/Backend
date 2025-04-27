@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - yun
+      - develop
 
 jobs:
   build-and-push:
