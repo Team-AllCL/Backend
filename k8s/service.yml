@@ -1,12 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: allcl-service
+  name: order-cd-service
+  namespace: default
 spec:
   selector:
-    app: allcl
+    app: order-cd   # Deployment 레이블과 같아야함
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
   type: ClusterIP
+
