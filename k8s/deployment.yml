@@ -17,7 +17,7 @@ spec:
         - name: order-cd
           # image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci:latest
           image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci:v2
-          imagePullPolicy: Always
+          # imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
