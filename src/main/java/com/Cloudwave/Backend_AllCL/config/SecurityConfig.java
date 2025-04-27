@@ -10,13 +10,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .cors()                              // 여기 cors() 활성화
-            .and()
-            .csrf().disable()                     // CSRF 비활성화
-            .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll()         // 모든 요청 허용
-            );
-        return http.build();
+        return http
+                .cors(cors -> cors.disable()) // WebConfig에서 CORS 설정 가져오기
+                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().permitAll() // 모든 요청 허용
+                )
+                .build();
     }
 }
