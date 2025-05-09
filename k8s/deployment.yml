@@ -21,9 +21,9 @@ spec:
             - containerPort: 8080
           resources:
             requests:
-              cpu: "100m" #최소요청 (0.1core)
+              cpu: "100m"
             limits:
-              cpu: "200m" #최대허용
+              cpu: "200m"
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
@@ -40,18 +40,5 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: password
-
-        # 해당 부분을 추가!!
-        - name: monitoring-sidecar
-          image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/monitoring-sidecar:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 9100
-          resources:
-            requests:
-              cpu: "50m"
-            limits:
-              cpu: "100m"
-
       imagePullSecrets:
         - name: ecr-registry-secret
