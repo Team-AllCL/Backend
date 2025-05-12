@@ -25,15 +25,20 @@ public class UserController {
         User existingUser = userService.findByEmail(userDto.getEmail());
 
         if (existingUser != null) {
-            // 이미 존재하는 유저일 경우 → 비밀번호 검증
-            if (existingUser.getPassword().equals(userDto.getPassword())) {
-                return existingUser; // 로그인 성공
+            System.out.println(">>> 입력된 비밀번호: [" + userDto.getPassword() + "]");
+            System.out.println(">>> DB 저장된 비밀번호: [" + existingUser.getPassword() + "]");
+
+            if (userDto.getPassword().equals(existingUser.getPassword())) {
+                System.out.println(">>> 로그인 성공");
+                return existingUser;
             } else {
+                System.out.println(">>> 비밀번호 불일치");
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 틀렸습니다.");
             }
         }
 
-        // 존재하지 않으면 새로 가입
+        System.out.println(">>> 신규 유저로 등록");
         return userService.createUser(userDto);
     }
+
 }
