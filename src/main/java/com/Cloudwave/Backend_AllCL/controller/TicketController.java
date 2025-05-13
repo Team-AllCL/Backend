@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://dkgmp1k5bgam1.cloudfront.net")
+//@CrossOrigin(origins = "http://dkgmp1k5bgam1.cloudfront.net")
+@CrossOrigin(origins = "http://allcle-order.click")
+
 @RestController
 @RequestMapping("/api/v1/ticketing")
 @RequiredArgsConstructor
