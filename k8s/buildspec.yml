@@ -1,5 +1,6 @@
 version: 0.2
-# test
+# pipe 테스트2
+
 phases:
   install:
     runtime-versions:
