@@ -41,6 +41,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'software.amazon.awssdk:secretsmanager:2.25.39'
 	implementation 'software.amazon.awssdk:auth:2.25.39'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+
 }
 
 tasks.named('test') {
