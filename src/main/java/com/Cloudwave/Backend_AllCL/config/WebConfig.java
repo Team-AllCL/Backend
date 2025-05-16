@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3002",
                         "http://dkgmp1k5bgam1.cloudfront.net",
                         "https://api.allcle-order.click",
-                        ""https://api.allcle-ticketing.click"
+                        "https://api.allcle-ticketing.click"
 
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
