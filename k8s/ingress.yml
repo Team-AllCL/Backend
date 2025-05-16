@@ -11,14 +11,13 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: dkgmp1k5bgam1.cloudfront.net
+    - host: k8s-default-ordercdi-d036094ade-2077979796.ap-northeast-2.elb.amazonaws.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-              service:
-                name: order-cd-service   # Service 이름
+                name: order-cd-service
                 port:
                   number: 80
