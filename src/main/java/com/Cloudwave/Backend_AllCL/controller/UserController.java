@@ -9,7 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 //@CrossOrigin(origins = "http://dkgmp1k5bgam1.cloudfront.net")
-@CrossOrigin(origins = "http://allcle-order.click")
+@CrossOrigin(origins = {
+        "http://allcle-order.click",
+        "https://allcle-order.click"
+})
+
 
 @RestController
 @RequestMapping("/api/v1/users")
