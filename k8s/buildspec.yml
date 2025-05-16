@@ -1,5 +1,4 @@
 version: 0.2
-# pipe 테스트 3
 
 phases:
   install:
@@ -28,8 +27,7 @@ phases:
   post_build:
     commands:
       - echo Pushing Docker images to ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:latest
+      - printf '[{"name":"ticketing-backend","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
-    - build/libs/*.jar
+    - imagedefinitions.json
