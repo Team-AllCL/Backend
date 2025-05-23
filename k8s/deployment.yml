@@ -16,7 +16,7 @@ spec:
       containers:
         - name: order-cd
           image: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           resources:
