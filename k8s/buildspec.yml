@@ -12,7 +12,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-      - REPOSITORY_URI=961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/order-ci
+      - REPOSITORY_URI=961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/ticketing-backend
       - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com
 
   build:
