@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3001",
                         "http://localhost:3002",
                         "http://dkgmp1k5bgam1.cloudfront.net",
-                        "https://allcle-order.click",
+                        "https://www.allcle-order.click",
                         "https://allcle-ticketing.click"
 
                 )
