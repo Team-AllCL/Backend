@@ -50,7 +50,7 @@ public class TicketService {
         // 재고 감소
         inventory.decreaseStock();
 
-	//여기에 넣으라고요?
+	//SQS 
 	try {
 	    ObjectMapper mapper = new ObjectMapper();
 	    String messageBody = mapper.writeValueAsString(requestDto);
@@ -58,7 +58,8 @@ public class TicketService {
 	    SendMessageRequest sendMessageRequest = new SendMessageRequest()
 		     .withQueueUrl(queueUrl)
 		     .withMessageBody(messageBody)
-		     .withMessageGroupId("ticketingGroup"); // FIFO
+		     .withMessageGroupId("ticketingGroup"); //FIFO
+	    System.out.println("✅ SQS 메시지 전송 시도: " + messageBody);
 	    sqsClient.sendMessage(sendMessageRequest);
 	} catch (Exception e) {
 		e.printStackTrace();
@@ -81,4 +82,3 @@ public class TicketService {
                 .map(TicketResponseDto::new)
                 .toList();
     }
-
