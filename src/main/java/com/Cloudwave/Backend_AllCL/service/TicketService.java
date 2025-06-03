@@ -15,6 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
 
 @Service
@@ -24,6 +29,8 @@ public class TicketService {
     private final UserRepository userRepository;
     private final TicketInventoryRepository ticketInventoryRepository;
 
+    private final AmazonSQS sqsClient = AmazonSQSClientBuilder.defaultClient();
+    private final String queueUrl = "https://sqs.ap-northeast-2.amazonaws.com/961341508965/ticketing-queue.fifo";
 
     @Transactional
     public TicketResponseDto purchaseTicket(TicketRequestDto requestDto){
@@ -45,6 +52,21 @@ public class TicketService {
         // 재고 감소
         inventory.decreaseStock();
 
+	//SQS 
+	try {
+	    ObjectMapper mapper = new ObjectMapper();
+	    String messageBody = mapper.writeValueAsString(requestDto);
+
+	    SendMessageRequest sendMessageRequest = new SendMessageRequest()
+		     .withQueueUrl(queueUrl)
+		     .withMessageBody(messageBody)
+		     .withMessageGroupId("ticketingGroup"); //FIFO
+	    System.out.println("✅ SQS 메시지 전송 시도: " + messageBody);
+	    sqsClient.sendMessage(sendMessageRequest);
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new CustomException(ErrorCode.SQS_SEND_FAIL);
+	}
         // 티켓 저장
         Ticket ticket = Ticket.builder()
                 .user(user)
@@ -62,5 +84,4 @@ public class TicketService {
                 .map(TicketResponseDto::new)
                 .toList();
     }
-
 }
