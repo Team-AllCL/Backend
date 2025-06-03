@@ -1,3 +1,5 @@
+package com.Cloudwave.Backend_AllCL.service;
+
 import com.Cloudwave.Backend_AllCL.dto.ticket.TicketRequestDto;
 import com.Cloudwave.Backend_AllCL.dto.ticket.TicketResponseDto;
 import com.Cloudwave.Backend_AllCL.entity.Ticket;
@@ -28,7 +30,7 @@ public class TicketService {
     private final TicketInventoryRepository ticketInventoryRepository;
 
     private final AmazonSQS sqsClient = AmazonSQSClientBuilder.defaultClient();
-    private final String queueUrl = https://sqs.ap-northeast-2.amazonaws.com/961341508965/ticketing-queue.fifo
+    private final String queueUrl = "https://sqs.ap-northeast-2.amazonaws.com/961341508965/ticketing-queue.fifo";
 
     @Transactional
     public TicketResponseDto purchaseTicket(TicketRequestDto requestDto){
@@ -82,3 +84,4 @@ public class TicketService {
                 .map(TicketResponseDto::new)
                 .toList();
     }
+}
