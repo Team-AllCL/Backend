@@ -62,7 +62,10 @@ public class TicketService {
 		     .withMessageBody(messageBody)
 		     .withMessageGroupId("ticketingGroup"); //FIFO
 	    System.out.println("✅ SQS 메시지 전송 시도: " + messageBody);
-	    sqsClient.sendMessage(sendMessageRequest);
+	    
+	    SendMessageResult result = sqsClient.sendMessage(sendMessageRequest);
+  	    System.out.println("✅ SQS 메시지 전송 완료: " + result.toString());
+
 	} catch (Exception e) {
 		e.printStackTrace();
 		throw new CustomException(ErrorCode.SQS_SEND_FAIL);
