@@ -10,6 +10,7 @@ import com.Cloudwave.Backend_AllCL.exception.ErrorCode;
 import com.Cloudwave.Backend_AllCL.repository.TicketInventoryRepository;
 import com.Cloudwave.Backend_AllCL.repository.TicketRepository;
 import com.Cloudwave.Backend_AllCL.repository.UserRepository;
+import com.amazonaws.services.sqs.model.SendMessageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
