@@ -21,11 +21,11 @@ spec:
             - containerPort: 8080
           resources:
             requests:
-              cpu: "700m"
-              memory: "512Mi"
+              cpu: "1500m" # 기존 700m -> 1500m
+              memory: "1Gi" # 기존 512Mi -> 1Gi
             limits:
-              cpu: "1000m"
-              memory: "1Gi"
+              cpu: "2000m"   # 기존 1000m → 2000m
+              memory: "2Gi"     # 기존 1Gi → 2Gi
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
