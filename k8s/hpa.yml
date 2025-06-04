@@ -7,7 +7,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: order-cd # edeployment 이름과 일치해야 함
+    name: order-cd # edeployment 이름과 일치
   minReplicas: 2
   maxReplicas: 50  # 기존 4 → 10 -> 50
   targetCPUUtilizationPercentage: 10 #  기존 20 -> 10
