@@ -4,7 +4,7 @@ metadata:
   name: order-cd
   namespace: default
 spec:
-  replicas: 1
+  replicas: 30 # 여기 변경 
   selector:
     matchLabels:
       app: order-cd
