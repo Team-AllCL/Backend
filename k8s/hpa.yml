@@ -9,5 +9,5 @@ spec:
     kind: Deployment
     name: order-cd # edeployment 이름과 동일
   minReplicas: 2
-  maxReplicas: 2  # 기존 4 → 10 -> 50 .
+  maxReplicas: 10  # 기존 4 → 10 -> 50 .
   targetCPUUtilizationPercentage: 50 #  기존 20 -> 10
