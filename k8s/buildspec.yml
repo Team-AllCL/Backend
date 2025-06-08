@@ -57,11 +57,13 @@ phases:
         fi
 
       # 3) Fetch report & enforce thresholds
-      - aws ecr describe-image-scan-findings \
+      - |
+        aws ecr describe-image-scan-findings \
           --repository-name $REPOSITORY_NAME \
           --image-id imageTag=$IMAGE_TAG \
           --region ap-northeast-2 \
-          --output json > scan-report.json
+          --output json \
+          > scan-report.json
 
       - high=$(jq -r '.imageScanFindings.findingSeverityCounts.HIGH // 0' scan-report.json)
       - crit=$(jq -r '.imageScanFindings.findingSeverityCounts.CRITICAL // 0' scan-report.json)
