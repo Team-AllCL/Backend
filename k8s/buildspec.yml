@@ -27,9 +27,47 @@ phases:
   post_build:
     commands:
       - echo Pushing Docker images to ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      # - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
-      - printf '[{"name":"ticketing-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      # - printf '[{"name":"ticketing-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+      # 1) ECR 이미지 스캔 시작
+      - echo Starting image scan...
+      - aws ecr start-image-scan \
+          --repository-name my-app \
+          --image-id imageTag=$IMAGE_TAG \
+          --region ap-northeast-2
+
+      # 2) 스캔 완료 대기
+      - |
+        for i in $(seq 1 30); do
+          status=$(aws ecr describe-image-scan-findings \
+                    --repository-name my-app \
+                    --image-id imageTag=$IMAGE_TAG \
+                    --region ap-northeast-2 \
+                    --query 'imageScanStatus.status' \
+                    --output text)
+          echo "Scan status: $status"
+          [ "$status" = "COMPLETE" ] && break
+          sleep 10
+        done
+
+      # 3) 취약점 결과 조회 및 임계치 이상 시 실패 처리
+      - |
+        findings=$(aws ecr describe-image-scan-findings \
+                     --repository-name my-app \
+                     --image-id imageTag=$IMAGE_TAG \
+                     --region ap-northeast-2 \
+                     --query 'imageScanFindings.findingSeverityCounts' \
+                     --output json)
+        echo "Findings: $findings"
+        high=$(echo $findings | jq -r '.HIGH // 0')
+        critical=$(echo $findings | jq -r '.CRITICAL // 0')
+        if [ "$critical" -gt 0 ] || [ "$high" -gt 5 ]; then
+          echo "Too many high/critical vulnerabilities detected! Failing build."
+          exit 1
+        fi
+
 artifacts:
   files:
     - imagedefinitions.json
