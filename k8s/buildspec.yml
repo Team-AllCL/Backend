@@ -65,14 +65,18 @@ phases:
           --output json \
           > scan-report.json
 
-      - high=$(jq -r '.imageScanFindings.findingSeverityCounts.HIGH // 0' scan-report.json)
-      - crit=$(jq -r '.imageScanFindings.findingSeverityCounts.CRITICAL // 0' scan-report.json)
-      - echo "High: $high, Critical: $crit"
+            # ▶ 기존의 separate lines 대신, 한 번에 모두 처리
       - |
+        high=$(jq -r '.imageScanFindings.findingSeverityCounts.HIGH // 0' scan-report.json)
+        crit=$(jq -r '.imageScanFindings.findingSeverityCounts.CRITICAL // 0' scan-report.json)
+
+        echo "High: $high, Critical: $crit"
+
         if [ "$crit" -gt 0 ] || [ "$high" -gt 5 ]; then
           echo "Failing due to vulnerabilities." >&2
           exit 1
         fi
+
 
 artifacts:
   files:
