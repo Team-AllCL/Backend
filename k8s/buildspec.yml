@@ -1,10 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    REPOSITORY_NAME: ticketing-backend
-    REPOSITORY_URI: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/$REPOSITORY_NAME
-
 phases:
   install:
     runtime-versions:
@@ -16,6 +11,8 @@ phases:
     commands:
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - echo Logging in to Amazon ECR...
+      - REPOSITORY_NAME= ticketing-backend
+      - REPOSITORY_URI=961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/ticketing-backend
       - aws ecr get-login-password --region ap-northeast-2 \
           | docker login --username AWS --password-stdin $REPOSITORY_URI
 
