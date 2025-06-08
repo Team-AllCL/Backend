@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  variables:
+    # optional: 여기에만 선언해 두어도 됩니다
+    # REPOSITORY_NAME: ticketing-backend
+
 phases:
   install:
     runtime-versions:
@@ -10,11 +15,12 @@ phases:
   pre_build:
     commands:
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-      - echo Logging in to Amazon ECR...
-      - REPOSITORY_NAME= ticketing-backend
-      - REPOSITORY_URI=961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/ticketing-backend
-      - aws ecr get-login-password --region ap-northeast-2 \
-          | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo "Logging in to Amazon ECR..."
+      - export REPOSITORY_NAME=ticketing-backend
+      - export REPOSITORY_URI=961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY_NAME}
+      - |
+        aws ecr get-login-password --region ap-northeast-2 \
+        | docker login --username AWS --password-stdin "$REPOSITORY_URI"
 
   build:
     commands:
@@ -25,11 +31,12 @@ phases:
 
   post_build:
     commands:
-      - echo Pushing images...
+      - echo "Pushing images..."
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
       - printf '[{"name":"ticketing-container","imageUri":"%s"}]' \
-          $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+          $REPOSITORY_URI:$IMAGE_TAG \
+          > imagedefinitions.json
 
       # 1) Start scan
       - aws ecr start-image-scan \
@@ -61,20 +68,16 @@ phases:
           --region ap-northeast-2 \
           --output json \
           > scan-report.json
-
-            # ▶ 기존의 separate lines 대신, 한 번에 모두 처리
       - |
         high=$(jq -r '.imageScanFindings.findingSeverityCounts.HIGH // 0' scan-report.json)
         crit=$(jq -r '.imageScanFindings.findingSeverityCounts.CRITICAL // 0' scan-report.json)
-
         echo "High: $high, Critical: $crit"
-
         if [ "$crit" -gt 0 ] || [ "$high" -gt 5 ]; then
           echo "Failing due to vulnerabilities." >&2
           exit 1
         fi
 
-
 artifacts:
   files:
     - imagedefinitions.json
+    - scan-report.json
