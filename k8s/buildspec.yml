@@ -30,6 +30,58 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
       - printf '[{"name":"ticketing-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+      # 1) Start scan
+      - aws ecr start-image-scan \
+          --repository-name $REPOSITORY_NAME \
+          --image-id imageTag=$IMAGE_TAG \
+          --region ap-northeast-2
+
+      # 2) Wait with timeout
+      - |
+        for i in $(seq 1 30); do
+          status=$(aws ecr describe-image-scan-findings \
+                     --repository-name $REPOSITORY_NAME \
+                     --image-id imageTag=$IMAGE_TAG \
+                     --region ap-northeast-2 \
+                     --query 'imageScanStatus.status' --output text)
+          [ "$status" = "COMPLETE" ] && break
+          sleep 10
+        done
+        if [ "$status" != "COMPLETE" ]; then
+          echo "Scan did not complete in time." >&2
+          exit 1
+        fi
+
+      # 3) Fetch counts via AWS CLI --query
+      - |
+        # HIGH 취약점 개수
+        high=$(aws ecr describe-image-scan-findings \
+          --repository-name $REPOSITORY_NAME \
+          --image-id imageTag=$IMAGE_TAG \
+          --region ap-northeast-2 \
+          --query 'imageScanFindings.findingSeverityCounts.HIGH' \
+          --output text)
+        # CRITICAL 취약점 개수
+        crit=$(aws ecr describe-image-scan-findings \
+          --repository-name $REPOSITORY_NAME \
+          --image-id imageTag=$IMAGE_TAG \
+          --region ap-northeast-2 \
+          --query 'imageScanFindings.findingSeverityCounts.CRITICAL' \
+          --output text)
+
+        # 값이 없으면 0으로 기본 설정
+        high=${high:-0}
+        crit=${crit:-0}
+
+        echo "High: $high, Critical: $crit"
+
+        if [ "$crit" -gt 0 ] || [ "$high" -gt 5 ]; then
+          echo "Failing due to vulnerabilities." >&2
+          exit 1
+        fi
+
+
 artifacts:
   files:
     - imagedefinitions.json
