@@ -1,6 +1,7 @@
 package com.Cloudwave.Backend_AllCL.dto.ticket;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(force = true) 
 @Getter
