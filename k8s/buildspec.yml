@@ -1,86 +1,100 @@
 version: 0.2
 
+env:
+  variables:
+    # 반드시 정의해 주세요!
+    REPOSITORY_NAME: ticketing-backend
+    REPOSITORY_URI: 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/$REPOSITORY_NAME
+
 phases:
   install:
     runtime-versions:
       java: corretto17
     commands:
       - echo Installing dependencies...
+      - yum install -y jq
 
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-      - REPOSITORY_URI=961341508965.dkr.ecr.ap-northeast-2.amazonaws.com/ticketing-backend
-      - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 961341508965.dkr.ecr.ap-northeast-2.amazonaws.com
+      # 태그 계산
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+      - echo "Repository URI: $REPOSITORY_URI"
+      - echo "Image tag: $IMAGE_TAG"
+      # 로그인
+      - |
+        aws ecr get-login-password --region ap-northeast-2 \
+        | docker login --username AWS --password-stdin "$REPOSITORY_URI"
 
   build:
     commands:
-      - echo Building the JAR file...
+      - echo Building the JAR...
       - chmod +x ./gradlew
       - ./gradlew clean build -x test
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+      - docker build -t "$REPOSITORY_URI:$IMAGE_TAG" .
+      - docker tag "$REPOSITORY_URI:$IMAGE_TAG" "$REPOSITORY_URI:latest"
 
   post_build:
     commands:
       - echo Pushing Docker images to ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:latest
-      - printf '[{"name":"ticketing-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - docker push "$REPOSITORY_URI:$IMAGE_TAG"
+      - docker push "$REPOSITORY_URI:latest"
 
-      # 1) Start scan
+      # imagedefinitions.json 생성 (ECS 배포용)
+      - |
+        printf '[{"name":"ticketing-container","imageUri":"%s"}]' \
+          "$REPOSITORY_URI:$IMAGE_TAG" \
+          > imagedefinitions.json
+
+      # 1) ECR 이미지 스캔 시작
       - aws ecr start-image-scan \
-          --repository-name $REPOSITORY_NAME \
-          --image-id imageTag=$IMAGE_TAG \
+          --repository-name "$REPOSITORY_NAME" \
+          --image-id imageTag="$IMAGE_TAG" \
           --region ap-northeast-2
 
-      # 2) Wait with timeout
+      # 2) 스캔 완료 대기 (최대 5분)
       - |
         for i in $(seq 1 30); do
           status=$(aws ecr describe-image-scan-findings \
-                     --repository-name $REPOSITORY_NAME \
-                     --image-id imageTag=$IMAGE_TAG \
+                     --repository-name "$REPOSITORY_NAME" \
+                     --image-id imageTag="$IMAGE_TAG" \
                      --region ap-northeast-2 \
-                     --query 'imageScanStatus.status' --output text)
+                     --query 'imageScanStatus.status' \
+                     --output text)
+          echo "Scan status: $status"
           [ "$status" = "COMPLETE" ] && break
           sleep 10
         done
         if [ "$status" != "COMPLETE" ]; then
-          echo "Scan did not complete in time." >&2
+          echo "❌ Scan did not complete in time." >&2
           exit 1
         fi
 
-      # 3) Fetch counts via AWS CLI --query
+      # 3) 취약점 카운트 조회 및 임계치 검사
       - |
-        # HIGH 취약점 개수
         high=$(aws ecr describe-image-scan-findings \
-          --repository-name $REPOSITORY_NAME \
-          --image-id imageTag=$IMAGE_TAG \
+          --repository-name "$REPOSITORY_NAME" \
+          --image-id imageTag="$IMAGE_TAG" \
           --region ap-northeast-2 \
           --query 'imageScanFindings.findingSeverityCounts.HIGH' \
           --output text)
-        # CRITICAL 취약점 개수
         crit=$(aws ecr describe-image-scan-findings \
-          --repository-name $REPOSITORY_NAME \
-          --image-id imageTag=$IMAGE_TAG \
+          --repository-name "$REPOSITORY_NAME" \
+          --image-id imageTag="$IMAGE_TAG" \
           --region ap-northeast-2 \
           --query 'imageScanFindings.findingSeverityCounts.CRITICAL' \
           --output text)
 
-        # 값이 없으면 0으로 기본 설정
         high=${high:-0}
         crit=${crit:-0}
 
         echo "High: $high, Critical: $crit"
 
         if [ "$crit" -gt 0 ] || [ "$high" -gt 5 ]; then
-          echo "Failing due to vulnerabilities." >&2
+          echo "❌ Failing due to vulnerabilities." >&2
           exit 1
         fi
-
 
 artifacts:
   files:
