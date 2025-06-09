@@ -2,6 +2,7 @@ package com.Cloudwave.Backend_AllCL.dto.ticket;
 
 import lombok.Getter;
 
+@NoArgsConstructor(force = true) 
 @Getter
 public class TicketRequestDto {
 
