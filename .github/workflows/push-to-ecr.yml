@@ -1,10 +1,15 @@
-name: Build and Push to ECR
+name: Build, Scan, and Push to ECR
 
 on:
   push:
     branches:
       #- yun
       - develop
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
 
 jobs:
   build-and-push:
@@ -20,25 +25,56 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Build JAR with Gradle
+    - name: Build JAR
       run: |
         chmod +x ./gradlew
-        ./gradlew clean build -x test  # 테스트는 스킵할 수 있음
+        ./gradlew clean build -x test
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v3
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build and Push Docker image
+    - name: Set IMAGE_TAG
+      id: image_tag
+      run: echo "tag=$(echo $GITHUB_SHA | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+    - name: Build Docker image
       run: |
-        IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
-        docker build -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG .
-        docker tag ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest
-        docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
-        docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.image_tag.outputs.tag }} .
+
+    - name: Run Trivy scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.image_tag.outputs.tag }}
+        format: 'json'
+        output: trivy_full.json
+        exit-code: '0'
+        ignore-unfixed: true
+        
+    - name: Extract Trivy summary from JSON
+      run: |
+        jq -r '
+          {
+            critical: ([.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length),
+            high: ([.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length),
+            medium: ([.Results[].Vulnerabilities[]? | select(.Severity == "MEDIUM")] | length)
+          }
+        ' trivy_full.json > trivy_summary.json
+
+        cat trivy_summary.json
+
+    - name: Upload Trivy summary to S3
+      run: |
+        aws s3 cp trivy_summary.json s3://${{ secrets.S3_REPORT_BUCKET }}/trivy/${{ github.run_id }}/trivy_summary.json
+
+    - name: Tag and Push Docker image
+      run: |
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.image_tag.outputs.tag }} $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.image_tag.outputs.tag }}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
